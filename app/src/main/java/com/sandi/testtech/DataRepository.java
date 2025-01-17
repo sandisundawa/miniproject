@@ -9,20 +9,16 @@ import java.util.List;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class DataRepository {
-    private ApiInterface apiInterface;
-
+    private final ApiInterface apiService;
     private DataSource dataSource;
 
-    public DataRepository(ApiInterface apiInterface, DataSource dataSource) {
-        this.apiInterface = apiInterface;
+    public DataRepository(ApiInterface apiService) {
+        this.apiService = apiService;
     }
 
     public MutableLiveData<List<DataExample>> fetchData(CompositeDisposable compositeDisposable) {
-        dataSource = new DataSource(apiInterface, compositeDisposable);
-        return dataSource.fetchData();
-    }
-
-    public void cancel() {
-
+        dataSource = new DataSource(apiService, compositeDisposable);
+        dataSource.fetchData();
+        return dataSource.getDataResponse();
     }
 }
