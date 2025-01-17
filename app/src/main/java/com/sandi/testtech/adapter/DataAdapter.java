@@ -1,5 +1,6 @@
 package com.sandi.testtech.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -12,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.orhanobut.hawk.Hawk;
+import com.sandi.testtech.DetailActivity;
 import com.sandi.testtech.R;
 import com.sandi.testtech.model.DataExample;
 
@@ -36,14 +39,18 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.MyViewHolder> 
         return new MyViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        DataExample genreItem = data.get(position);
-        holder.title.setText(genreItem.getTitle());
+        DataExample item = data.get(position);
+        holder.id.setText("Id : "+ item.getId());
+        holder.title.setText("Title : " + item.getTitle());
 
-        holder.title.setOnClickListener(v -> {
-//            Intent toMovie = new Intent(context, ListMovieActivity.class);
-//            context.startActivity(toMovie);
+        holder.cardView.setOnClickListener(v -> {
+            Hawk.init(context).build();
+            Hawk.put("contentData", item);
+            Intent toMovie = new Intent(context, DetailActivity.class);
+            context.startActivity(toMovie);
         });
     }
 
@@ -52,14 +59,20 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.MyViewHolder> 
         return data.size();
     }
 
+    public void refreshData(List<DataExample> newData) {
+        data = newData;
+    }
+
     public static class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView id;
         TextView title;
-        TextView body;
+        CardView cardView;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            title = itemView.findViewById(R.id.tv_id);
-            body = itemView.findViewById(R.id.tv_body);
+            id = itemView.findViewById(R.id.tv_id);
+            title = itemView.findViewById(R.id.tv_title);
+            cardView = itemView.findViewById(R.id.cv_content);
         }
     }
 }
